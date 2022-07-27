@@ -16,6 +16,7 @@ provider:
   environment:
     FELIX_CACHE_BUFSIZE: 1024
     LUCEE_ENABLE_DIALECT: true
+    JAVA_TOOL_OPTIONS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1
 functions:
   # invokes the fuselessEvent function
   greeterFunction:
