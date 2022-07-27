@@ -1,0 +1,31 @@
+apply plugin: 'java'
+
+// uses the parent directory name by default
+// archivesBaseName = 'greeter'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile (
+        'com.amazonaws.serverless:aws-serverless-java-container-core:1.5',
+        'javax.servlet.jsp:javax.servlet.jsp-api:2.3.1',
+        'javax.el:javax.el-api:3.0.0',
+        'com.amazonaws:aws-lambda-java-core:1.2.1',
+        'com.amazonaws:aws-lambda-java-log4j2:1.3.0'
+    )
+    compile fileTree(dir: 'jars', include: '*.jar')
+}
+
+task buildZip(type: Zip) {
+    from compileJava
+    from processResources
+    from 'cfml/'
+    into('lib') {
+        from configurations.runtime
+    }
+
+}
+
+build.dependsOn buildZip

@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+if [[ !$LUCEE_VERSION ]]; then
+	LUCEE_VERSION=5.3.9.141
+fi
+
+if [[ !$FUSELESS_VERSION ]]; then
+	FUSELESS_VERSION="0.2.0"
+fi
+
+# -----------------------------------------------------------------------------
+# Helper functions start with _ and aren't listed in this script's help menu.
+# -----------------------------------------------------------------------------
+
+function _slss_test {
+	serverless invoke local --function ${1} --docker --path ./tests/events/${2}.json
+	echo ""
+}
+
+# -----------------------------------------------------------------------------
+
+function build() {
+	# TODO: a force option to run "clean" beforehand
+
+	# download the lucee-light and fuseless jars if they don't exist as they are not committed to the repo
+	(
+		mkdir -p jars
+		cd jars
+		wget --no-clobber https://cdn.lucee.org/lucee-light-$LUCEE_VERSION.jar
+		wget --no-clobber https://github.com/foundeo/fuseless/releases/download/v$FUSELESS_VERSION/foundeo-fuseless-$FUSELESS_VERSION.jar
+	)
+
+	gradle build
+}
+
+function test {
+	test:serverless
+	test:unit
+}
+
+function test:serverless {
+	build
+	_slss_test greeterFunction main
+	_slss_test greeterFunction greeter-hello
+	_slss_test greeterFunction greeter-goodbye
+	_slss_test greeterFunction greeter-bark
+	_slss_test greeterFunction cloudwatch-scheduled-event
+	_slss_test greeterFunction s3-put
+	_slss_test greeterFunction sqs-receive-message
+	_slss_test greeterEndpoint apigateway-aws-proxy
+}
+
+function test:unit {
+	# rocketunit test suite
+	(
+		PORT=59666
+		URL="http://127.0.0.1:$PORT/?txt"
+		cd ../../rocketunit
+		box server start openbrowser=false port=$PORT
+		echo "Running Rocketunit Tests: $URL"
+		http_code=$(curl -s --request GET -o /tmp/result.txt -w '%{http_code}' ${URL};)
+		echo "Finished with Status: $http_code"
+		echo ""
+		cat /tmp/result.txt
+		rm /tmp/result.txt
+		echo ""
+		box server stop
+	)
+}
+
+function clean {
+  ## Remove build and other machine generates files
+  rm -rf jars/ build/
+}
+
+function help {
+  printf "%s <task> [args]\n\nTasks:\n" "${0}"
+
+  compgen -A function | grep -v "^_" | cat -n
+
+  printf "\nExtended help:\n  Each task has comments for general usage\n"
+}
+
+# This idea is heavily inspired by: https://github.com/adriancooney/Taskfile
+TIMEFORMAT=$'\nTask completed in %3lR'
+time "${@:-help}"

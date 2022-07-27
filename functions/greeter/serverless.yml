@@ -1,0 +1,33 @@
+service: greeter
+configValidationMode: error
+provider:
+  name: aws
+  runtime: java8
+  region: ap-southeast-2
+  stage: "${opt:stage, 'dev'}"
+  memorySize: 1024
+  timeout: 20
+  iam:
+    role: !Sub arn:aws:iam::${AWS::AccountId}:role/serverless
+  stackTags:
+    application: "${self:provider.stage} ${self:service}"
+  deploymentBucket:
+    name: ${self:custom.env.deploymentBucket, 'myDevBucket'}
+  environment:
+    FELIX_CACHE_BUFSIZE: 1024
+    LUCEE_ENABLE_DIALECT: true
+functions:
+  # invokes the fuselessEvent function
+  greeterFunction:
+    handler: com.foundeo.fuseless.EventLambdaHandler::handleRequest
+  # accepts a request via API agateway
+  greeterEndpoint:
+    handler: com.foundeo.fuseless.StreamLambdaHandler
+    events:
+      - http:
+          path: /{proxy+}
+          method: any
+package:
+  artifact: build/distributions/greeter.zip
+custom:
+  env: "${file(./config/${self:provider.stage}.env.json)}"
