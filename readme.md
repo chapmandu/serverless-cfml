@@ -26,6 +26,7 @@ Either run the `./run install` script* in your terminal or install manually.
 *./functions/greeter/Application.cfc*
 
 `fuselessEvent()` is the entry point for invoked Lambda functions
+
 `onRequest()` is the entry point for Lambda functions called via API gateway
 
 ### Creating a new Serverless Application
@@ -70,7 +71,7 @@ Run the unit tests in a browser:
 
 ## Deployment
 
-You will need a `serverless` role in AWS IAM that has permission to perform all the resource creation defined in your `serverless.yml`
+You will need a "serverless" role in AWS IAM that has permission to perform all the resource creation defined in your `serverless.yml`
 
 See https://www.serverless.com/framework/docs/providers/aws/cli-reference/deploy
 
@@ -80,6 +81,8 @@ See https://www.serverless.com/framework/docs/providers/aws/cli-reference/deploy
 - [Ortus Solutions](https://www.ortussolutions.com/products/commandbox)
 - [Robin Hilliard](https://github.com/robinhilliard/rocketunit)
 - [Ben Nadel](https://www.bennadel.com/blog/3801-pretty-printing-a-coldfusion-query-object-in-lucee-cfml-5-2-9-31.htm)
+
+### Pull Requests Welcome
 
 ---
 
