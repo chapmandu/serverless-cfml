@@ -27,7 +27,6 @@ function _slss_test {
 function build() {
 	# TODO: a force option to run "clean" beforehand
 
-
 	# download the lucee-light and fuseless jars if they don't exist as they are not committed to the repo
 	(
 		mkdir -p jars
@@ -36,9 +35,7 @@ function build() {
 		wget --no-clobber https://github.com/foundeo/fuseless/releases/download/v$FUSELESS_VERSION/foundeo-fuseless-$FUSELESS_VERSION.jar
 	)
 
-	box cfcompile sourcePath=$CFML_SOURCE_PATH destPath=${CFML_DEST_PATH} cfengine=lucee@${LUCEE_VERSION}
-	# doesn't seem to stop
-	box server forget name=cfml-compiler-server force=true
+	box cfcompile sourcePath=$CFML_SOURCE_PATH destPath=$CFML_DEST_PATH cfengine=lucee@$LUCEE_VERSION
 
 	gradle build
 }
@@ -80,7 +77,7 @@ function test:unit {
 
 function clean {
   ## Remove build and other machine generates files
-  rm -rf jars/ build/
+  rm -rf jars/ build/ cfml/app .gradle .serverless
 }
 
 function help {
