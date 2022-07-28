@@ -34,7 +34,7 @@ Either run the `./run install` script* in your terminal or install manually.
 Follow the basic structure of the "greeter" application.
 
 - Modify:
-  - `./functions/yournewapp/cfml/app/Application.cfc`
+  - `./functions/yournewapp/cfml/src/Application.cfc`
   - `./functions/yournewapp/serverless.yml`
   - `./functions/yournewapp/tests/run`
   - `./functions/yournewapp/tests/*.cfc`
@@ -68,6 +68,14 @@ Run the unit tests in a browser:
 `cd rocketunit`
 
 `box server start openbrowser=true --noSaveSettings`
+
+## Compiling
+
+`cd functions/greeter`
+
+`./run build`
+
+This command will compile the cfml templates to bytecode and run the gradle build, resulting in a finished `./build/distributions/greeter.zip` file ready to deployment to AWS Lambda.
 
 ## Deployment
 
