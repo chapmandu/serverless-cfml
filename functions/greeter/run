@@ -37,6 +37,8 @@ function build() {
 	)
 
 	box cfcompile sourcePath=$CFML_SOURCE_PATH destPath=${CFML_DEST_PATH} cfengine=lucee@${LUCEE_VERSION}
+	# doesn't seem to stop
+	box server forget name=cfml-compiler-server force=true
 
 	gradle build
 }
