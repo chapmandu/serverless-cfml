@@ -8,8 +8,11 @@ coverage
 .serverless
 
 # jars
-jars
+**/jars/
 *.jar
+
+# compiled cfml
+**/cfml/app/
 
 # gradle
 .gradle
